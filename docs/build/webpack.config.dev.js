@@ -1,4 +1,5 @@
 module.exports = {
+  mode: 'development',
   watchOptions: {
     aggregateTimeout: 300,
     poll: 1000
@@ -12,7 +13,7 @@ module.exports = {
     port: 8080
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.css$/,
         loaders: ['style-loader', 'css-loader']

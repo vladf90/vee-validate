@@ -4,22 +4,12 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 
 module.exports = {
+  mode: 'production',
   plugins: [
     new CleanWebpackPlugin(['assets'], {
       root: path.join(__dirname, '/../')
     }),
     new ExtractTextPlugin('css/[name].css'),
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'js/vendor-[hash].js'
-    }),
-    new webpack.optimize.MinChunkSizePlugin({ minChunkSize: 51200 }),
-    new webpack.optimize.UglifyJsPlugin({
-      mangle: true,
-      compress: {
-        warnings: false
-      }
-    }),
     new webpack.DefinePlugin({
       'process.env': {
         BABEL_ENV: JSON.stringify(process.env.NODE_ENV),
@@ -42,7 +32,7 @@ module.exports = {
     })
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract({

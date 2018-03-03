@@ -18,10 +18,7 @@ const page = (name) => {
 const isProduction = process.env.NODE_ENV === 'production';
 
 let config = {
-  entry: {
-    bundle: path.join(__dirname, '/../', 'src/js/main'),
-    vendor: ['vue', 'vee-validate']
-  },
+  entry: path.join(__dirname, '/../', 'src/js/main'),
   output: {
     path: path.join(__dirname, '/../', 'assets'),
     filename: 'js/[name]-[hash].js',
@@ -48,7 +45,7 @@ let config = {
     new FriendlyErrorsWebpackPlugin()
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /(node_modules|locale)/,
@@ -57,11 +54,7 @@ let config = {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['es2015', { modules: false }],
-              ],
-              plugins: [
-                'transform-object-rest-spread',
-                'syntax-dynamic-import'
+                ['env', { modules: false }],
               ]
             }
           }
@@ -101,7 +94,7 @@ let config = {
         }
       },
       {
-        test: /.pug$/,
+        test: /\.pug$/,
         exclude: /node_modules/,
         loader: 'pug-loader'
       }
