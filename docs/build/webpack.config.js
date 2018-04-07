@@ -1,9 +1,8 @@
 const path = require('path');
 const merge = require('webpack-merge');
-const poststylus = require('poststylus');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 
 // eslint-disable-next-line
@@ -30,19 +29,15 @@ let config = {
     }
   },
   plugins: [
-    new webpack.LoaderOptionsPlugin({
-      stylus: {
-        use: [poststylus(['autoprefixer'])]
-      }
-    }),
+    new VueLoaderPlugin(),
+    new FriendlyErrorsWebpackPlugin(),
     page('index'),
     page('api'),
     page('examples'),
     page('validation'),
     page('localization'),
     page('advanced'),
-    page('configuration'),
-    new FriendlyErrorsWebpackPlugin()
+    page('configuration')
   ],
   module: {
     rules: [
@@ -53,8 +48,16 @@ let config = {
           {
             loader: 'babel-loader',
             options: {
+              babelrc: false,
+              plugins: ['syntax-dynamic-import', '@babel/plugin-proposal-object-rest-spread'],
               presets: [
-                ['env', { modules: false }],
+                [
+                  '@babel/preset-env',
+                  {
+                    modules: false,
+                    browsers: ['last 2 versions', 'safari >= 7']
+                  }
+                ]
               ]
             }
           }
@@ -79,24 +82,41 @@ let config = {
       },
       {
         test: /\.woff(2)?(\?.*)?$/i,
-        loader: 'url-loader',
-        query: {
-          limit: 10000,
-          mimetype: 'application/font-woff',
-          name: 'fonts/[name].[ext]'
-        }
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000,
+              mimetype: 'application/font-woff',
+              name: 'fonts/[name].[ext]'
+            }
+          }
+        ]
       },
       {
         test: /\.(ttf|eot|svg)(\?.*)?$/,
-        loader: 'file-loader',
-        query: {
-          name: 'fonts/[name].[ext]'
-        }
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'fonts/[name].[ext]'
+            }
+          }
+        ]
       },
       {
         test: /\.pug$/,
-        exclude: /node_modules/,
-        loader: 'pug-loader'
+        oneOf: [
+          // this applies to <template lang="pug"> in Vue components
+          {
+            resourceQuery: /^\?vue/,
+            use: ['pug-plain-loader']
+          },
+          // this applies to pug imports inside JavaScript
+          {
+            use: ['pug-loader']
+          }
+        ]
       }
     ]
   }
