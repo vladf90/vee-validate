@@ -12,9 +12,6 @@
     "plugins": [
         "html"
     ],
-    "ecmaFeatures": {
-        "experimentalObjectRestSpread": true
-    },
     "parserOptions": {
         "sourceType": "module"
     },
